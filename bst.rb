@@ -47,6 +47,17 @@ class Tree
     end
   end
 
+  def find(value, location=@root)
+    return nil if location.nil?
+    if location.data == value
+      return location
+    elsif location.data > value
+      find(value, location.left_node)
+    else
+      find(value, location.right_node)
+    end
+  end
+
   protected
   attr_accessor :root
 end

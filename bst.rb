@@ -14,6 +14,7 @@ class Node
 end
 
 class Tree
+  attr_reader :root
   def initialize(arr)
     @arr = arr.to_a.sort.uniq
     @root = build_tree(@arr, 0, @arr.size - 1)
@@ -33,4 +34,19 @@ class Tree
     puts "#{prefix}#{is_left ? '└── ' : '┌── '}#{node.data}"
     pretty_print(node.left_node, "#{prefix}#{is_left ? '    ' : '│   '}", true) if node.left_node
   end
+
+  def insert(value, location=@root)
+    return @root = Node.new(value) if @root.nil?
+    
+    if location.data > value
+      return location.left_node = Node.new(value) if location.left_node.nil?
+      insert(value, location.left_node)
+    else
+      return location.right_node = Node.new(value) if location.right_node.nil?
+      insert(value, location.right_node)
+    end
+  end
+
+  protected
+  attr_accessor :root
 end

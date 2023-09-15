@@ -47,6 +47,81 @@ class Tree
     end
   end
 
+  def delete(value, location=@root)
+    def case3(node)
+      temp = node.right_node
+      until temp.left_node.left_node.nil?
+        temp = temp.left_node
+      end
+
+      replacement = temp.left_node
+      node.data = replacement.data
+
+      if replacement.left_node.nil? && replacement.right_node.nil?
+        temp.left_node = nil
+      elsif replacement.left_node.nil? && !replacement.right_node.nil?
+        temp.left_node = replacement.right_node
+      end
+    end
+
+    return nil if location.nil?
+    if value > location.data
+      if location.right_node.data == value
+        if location.right_node.right_node.nil? && location.right_node.left_node.nil? #delete case 1
+          location.right_node = nil
+          self.pretty_print
+          return
+        end
+
+        if !location.right_node.left_node.nil? && location.right_node.right_node.nil? #case 2 with one child node on the left
+          location.right_node = location.right_node.left_node
+          self.pretty_print
+          return
+        end
+
+        if location.right_node.left_node.nil? && !location.right_node.right_node.nil? #case 2 with one child node on the right
+          location.right_node = location.right_node.right_node
+          self.pretty_print
+          return
+        end
+
+        if !location.right_node.left_node.nil? && !location.right_node.right_node.nil? #delete case 3
+          case3(location.right_node)
+          self.pretty_print
+          return
+        end
+      end
+      delete(value, location.right_node)
+    else
+      if location.left_node.data == value
+        if location.left_node.right_node.nil? && location.left_node.left_node.nil? #delete case 1
+          location.left_node = nil
+          self.pretty_print
+          return 
+        end
+
+        if !location.left_node.left_node.nil? && location.left_node.right_node.nil? #case 2 with one child node on the left
+          location.left_node = location.left_node.left_node
+          self.pretty_print
+          return 
+        end
+
+        if location.left_node.left_node.nil? && !location.left_node.right_node.nil? #case 2 with one child node on the right
+          location.right_node = location.left_node.right_node
+          self.pretty_print
+          return 
+        end
+
+        if !location.left_node.left_node.nil? && !location.left_node.right_node.nil? #delete case 3
+          case3(location.left_node)
+          self.pretty_print
+          return 
+        end
+      end
+      delete(value, location.left_node)
+    end
+  end
+
   def find(value, location=@root)
     return nil if location.nil?
     if location.data == value

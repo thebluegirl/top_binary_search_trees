@@ -1,5 +1,5 @@
 class Node
-  attr_accessor :left_node, :right_node
+  attr_accessor :left_node, :right_node, :data
   include Comparable
   attr :data
   def <=>(other_node)
@@ -50,21 +50,33 @@ class Tree
   def delete(value, location=@root)
     def case3(node)
       temp = node.right_node
-      until temp.left_node.left_node.nil?
-        temp = temp.left_node
+      replacement = temp
+      if !temp.left_node.nil?
+        until temp.left_node.left_node.nil?
+          temp = temp.left_node
+        end
+        replacement = temp.left_node
       end
-
-      replacement = temp.left_node
+      
+      if node == @root #if the node to be deleted is the root of the tree
+        return @root = Node.new(replacement.data, node.left_node, node.right_node)
+      end
+      
       node.data = replacement.data
 
-      if replacement.left_node.nil? && replacement.right_node.nil?
-        temp.left_node = nil
-      elsif replacement.left_node.nil? && !replacement.right_node.nil?
+      if temp == replacement #the replacement of the node is its right node
+        return node.right_node = replacement.right_node
+      end
+
+      if replacement.left_node.nil? && replacement.right_node.nil? #delete case 1
+        return temp.left_node = nil
+      elsif replacement.left_node.nil? && !replacement.right_node.nil? #delete case 2
         temp.left_node = replacement.right_node
       end
     end
 
-    return nil if location.nil?
+    return nil if location.nil? #if the node does not exist in the tree
+
     if value > location.data
       if location.right_node.data == value
         if location.right_node.right_node.nil? && location.right_node.left_node.nil? #delete case 1

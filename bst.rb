@@ -75,7 +75,7 @@ class Tree
       end
     end
 
-    return nil if location.nil? #if the node does not exist in the tree
+    return nil if self.find(value).nil?
 
     if value > location.data
       if location.right_node.data == value
@@ -119,7 +119,7 @@ class Tree
         end
 
         if location.left_node.left_node.nil? && !location.left_node.right_node.nil? #case 2 with one child node on the right
-          location.right_node = location.left_node.right_node
+          location.left_node = location.left_node.right_node
           self.pretty_print
           return 
         end
@@ -148,3 +148,11 @@ class Tree
   protected
   attr_accessor :root
 end
+
+tree = Tree.new([1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324])
+tree.pretty_print
+puts
+tree.delete(9)
+puts
+tree.delete(5)
+p tree.delete(525600)

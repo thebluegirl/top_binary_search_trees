@@ -59,11 +59,11 @@ class Tree
       end
       
       if node == @root #if the node to be deleted is the root of the tree
-        return @root = Node.new(replacement.data, node.left_node, node.right_node)
+        @root = Node.new(replacement.data, node.left_node, node.right_node)
+      else
+        node.data = replacement.data
       end
       
-      node.data = replacement.data
-
       if temp == replacement #the replacement of the node is its right node
         return node.right_node = replacement.right_node
       end
@@ -76,6 +76,32 @@ class Tree
     end
 
     return nil if self.find(value).nil?
+
+    if @root.data == value
+      if @root.left_node.nil? && @root.right_node.nil?
+        @root = nil
+        self.pretty_print
+        return
+      end
+
+      if @root.left_node.nil? && !@root.right_node.nil?
+        @root = @root.right_node
+        self.pretty_print
+        return
+      end
+
+      if !@root.left_node.nil? && @root.right_node.nil?
+        @root = @root.left_node
+        self.pretty_print
+        return
+      end
+
+      if !@root.left_node.nil? && !@root.right_node.nil?
+        case3(@root)
+        self.pretty_print
+        return
+      end
+    end
 
     if value > location.data
       if location.right_node.data == value
@@ -148,11 +174,3 @@ class Tree
   protected
   attr_accessor :root
 end
-
-tree = Tree.new([1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324])
-tree.pretty_print
-puts
-tree.delete(9)
-puts
-tree.delete(5)
-p tree.delete(525600)

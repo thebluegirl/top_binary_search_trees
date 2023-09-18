@@ -149,30 +149,32 @@ class Tree
 
   def level_order
     def enqueue(node)
-      return if node.nil? || (node.left_node.nil? && node.right_node.nil?)
-      @queue << node
-      @queue << node.left_node unless node.left_node.nil?
-      @queue << node.right_node unless node.right_node.nil?
-      dequeue.call if block_given?
-      enqueue(node.left_node)
-      enqueue(node.right_node)
+      return if node.nil?
+      @queue << node unless @queue.any?(node)
+      unless node.left_node.nil? && node.right_node.nil?
+        @queue << node.left_node unless node.left_node.nil?
+        @queue << node.right_node unless node.right_node.nil?
+      end
     end
 
     dequeue = lambda do
-      binding.pry
-      yield(queue[0])
-      queue.shift
+      yield(@queue[0].data)
+      @queue.shift
+      enqueue(@queue[0])
     end
-    
+
+    enqueue(@root)
     if block_given?
-      yield enqueue(@root)
       until @queue.empty?
         dequeue.call
       end
-      self.pretty_print
       return
     end
-    enqueue(@root)
+    counter = 1
+    until counter == @queue.length - 1
+      enqueue(@queue[counter])
+      counter += 1
+    end
     return @queue
   end
 

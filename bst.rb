@@ -18,6 +18,7 @@ class Tree
   def initialize(arr)
     @arr = arr.to_a.sort.uniq
     @root = build_tree(@arr, 0, @arr.size - 1)
+    @queue = Array.new
   end
 
   def build_tree(arr, arr_start, arr_end)
@@ -48,6 +49,7 @@ class Tree
   end
 
   def delete(value, location=@root)
+    return nil if self.find(value).nil?
     def case3(node)
       temp = node.right_node
       replacement = temp
@@ -71,89 +73,63 @@ class Tree
       if replacement.left_node.nil? && replacement.right_node.nil? #delete case 1
         return temp.left_node = nil
       elsif replacement.left_node.nil? && !replacement.right_node.nil? #delete case 2
-        temp.left_node = replacement.right_node
+        return temp.left_node = replacement.right_node
       end
     end
 
-    return nil if self.find(value).nil?
-
     if @root.data == value
       if @root.left_node.nil? && @root.right_node.nil?
-        @root = nil
-        self.pretty_print
-        return
+        return @root = nil
       end
 
       if @root.left_node.nil? && !@root.right_node.nil?
-        @root = @root.right_node
-        self.pretty_print
-        return
+        return @root = @root.right_node
       end
 
       if !@root.left_node.nil? && @root.right_node.nil?
-        @root = @root.left_node
-        self.pretty_print
-        return
+        return @root = @root.left_node
       end
 
       if !@root.left_node.nil? && !@root.right_node.nil?
-        case3(@root)
-        self.pretty_print
-        return
+        return case3(@root)
       end
     end
 
     if value > location.data
       if location.right_node.data == value
         if location.right_node.right_node.nil? && location.right_node.left_node.nil? #delete case 1
-          location.right_node = nil
-          self.pretty_print
-          return
+         return location.right_node = nil
         end
 
         if !location.right_node.left_node.nil? && location.right_node.right_node.nil? #case 2 with one child node on the left
-          location.right_node = location.right_node.left_node
-          self.pretty_print
-          return
+          return location.right_node = location.right_node.left_node
         end
 
         if location.right_node.left_node.nil? && !location.right_node.right_node.nil? #case 2 with one child node on the right
-          location.right_node = location.right_node.right_node
-          self.pretty_print
-          return
+          return location.right_node = location.right_node.right_node
         end
 
         if !location.right_node.left_node.nil? && !location.right_node.right_node.nil? #delete case 3
-          case3(location.right_node)
-          self.pretty_print
-          return
+          return case3(location.right_node)
         end
       end
       delete(value, location.right_node)
     else
       if location.left_node.data == value
         if location.left_node.right_node.nil? && location.left_node.left_node.nil? #delete case 1
-          location.left_node = nil
-          self.pretty_print
-          return 
+          return location.left_node = nil
         end
 
         if !location.left_node.left_node.nil? && location.left_node.right_node.nil? #case 2 with one child node on the left
-          location.left_node = location.left_node.left_node
-          self.pretty_print
-          return 
+          return location.left_node = location.left_node.left_node
         end
 
         if location.left_node.left_node.nil? && !location.left_node.right_node.nil? #case 2 with one child node on the right
-          location.left_node = location.left_node.right_node
-          self.pretty_print
-          return 
+          return location.left_node = location.left_node.right_node
         end
 
         if !location.left_node.left_node.nil? && !location.left_node.right_node.nil? #delete case 3
-          case3(location.left_node)
-          self.pretty_print
-          return 
+          return case3(location.left_node)
         end
       end
       delete(value, location.left_node)
@@ -171,6 +147,35 @@ class Tree
     end
   end
 
+  def level_order
+    def enqueue(node)
+      return if node.nil? || (node.left_node.nil? && node.right_node.nil?)
+      @queue << node
+      @queue << node.left_node unless node.left_node.nil?
+      @queue << node.right_node unless node.right_node.nil?
+      dequeue.call if block_given?
+      enqueue(node.left_node)
+      enqueue(node.right_node)
+    end
+
+    dequeue = lambda do
+      binding.pry
+      yield(queue[0])
+      queue.shift
+    end
+    
+    if block_given?
+      yield enqueue(@root)
+      until @queue.empty?
+        dequeue.call
+      end
+      self.pretty_print
+      return
+    end
+    enqueue(@root)
+    return @queue
+  end
+
   protected
-  attr_accessor :root
+  attr_accessor :root, :queue
 end

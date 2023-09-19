@@ -148,6 +148,7 @@ class Tree
   end
 
   def level_order
+    @queue = Array.new
     def enqueue(node)
       return if node.nil?
       @queue << node unless @queue.any?(node)
@@ -158,7 +159,7 @@ class Tree
     end
 
     dequeue = lambda do
-      yield(@queue[0].data)
+      yield(@queue[0])
       @queue.shift
       enqueue(@queue[0])
     end
@@ -176,6 +177,26 @@ class Tree
       counter += 1
     end
     return @queue
+  end
+
+  def preorder
+    @queue = Array.new
+
+    dequeue = lambda do
+      yield @queue[0]
+      @queue.shift
+    end
+
+    def enqueue(node)
+      return if node.nil?
+      @queue << node
+      dequeue.call if block_given?
+      enqueue(node.left_node)
+      enqueue(node.right_node)
+    end
+
+    enqueue(@root)
+    return @queue if !block_given?
   end
 
   protected

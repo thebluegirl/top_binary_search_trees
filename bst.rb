@@ -181,21 +181,22 @@ class Tree
 
   def preorder
     @queue = Array.new
-
     dequeue = lambda do
-      yield @queue[0]
-      @queue.shift
+      if block_given?
+        yield @queue[0]
+        @queue.shift
+      end
     end
-
-    def enqueue(node)
+    
+    def enqueue(node, block)
       return if node.nil?
       @queue << node
-      dequeue.call if block_given?
-      enqueue(node.left_node)
-      enqueue(node.right_node)
+      block.call
+      enqueue(node.left_node, block)
+      enqueue(node.right_node, block)
     end
 
-    enqueue(@root)
+    enqueue(@root, dequeue)
     return @queue if !block_given?
   end
 

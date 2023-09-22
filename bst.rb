@@ -243,6 +243,11 @@ class Tree
     return @queue if !block_given?
   end
 
+  def height(node)
+    return -1 if node.nil?
+    return [height(node.left_node), height(node.right_node)].max + 1
+  end
+
   protected
   attr_accessor :root, :queue
 end

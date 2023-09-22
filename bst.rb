@@ -200,6 +200,28 @@ class Tree
     return @queue if !block_given?
   end
 
+  def inorder
+    @queue = Array.new
+    dequeue = lambda do
+      yield @queue[0]
+      @queue.shift
+    end
+
+    def enqueue(node)
+      return if node.nil?
+      enqueue(node.left_node)
+      @queue << node
+      enqueue(node.right_node)
+    end
+
+    enqueue(@root)
+    if block_given?
+      dequeue.call until @queue.empty?
+      return
+    end
+    return @queue
+  end
+
   protected
   attr_accessor :root, :queue
 end

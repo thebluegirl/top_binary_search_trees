@@ -222,6 +222,27 @@ class Tree
     return @queue
   end
 
+  def postorder
+    @queue = Array.new
+    dequeue = lambda do
+      if block_given?
+        yield @queue[0]
+        @queue.shift
+      end
+    end
+
+    def enqueue(node, block)
+      return if node.nil?
+      enqueue(node.left_node, block)
+      enqueue(node.right_node, block)
+      @queue << node
+      block.call
+    end
+
+    enqueue(@root, dequeue)
+    return @queue if !block_given?
+  end
+
   protected
   attr_accessor :root, :queue
 end

@@ -289,6 +289,7 @@ class Tree
     new_tree = Tree.new(traverser(self.root))
     self.root = new_tree.root
   end
+  
   protected
   attr_accessor :root, :queue
 end

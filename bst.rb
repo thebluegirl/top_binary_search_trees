@@ -262,6 +262,20 @@ class Tree
     return depth_traverser(node, @root)
   end
 
+  def balanced?
+    def checker(node)
+      return if node.nil?
+      subtree_height_array =[height(node.left_node), height(node.right_node)].sort
+      return false if (subtree_height_array[1] - subtree_height_array[0]) > 1
+      checker(node.left_node)
+      checker(node.right_node)
+    end
+    if checker(self.root) == false
+      return false
+    else
+      return true
+    end
+  end
   protected
   attr_accessor :root, :queue
 end

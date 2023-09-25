@@ -276,6 +276,19 @@ class Tree
       return true
     end
   end
+
+  def rebalance
+    def traverser(node, arr=[])
+      return if node.nil?
+      arr << node.data
+      traverser(node.left_node, arr)
+      traverser(node.right_node, arr)
+      return arr
+    end
+    return self.root if self.balanced?
+    new_tree = Tree.new(traverser(self.root))
+    self.root = new_tree.root
+  end
   protected
   attr_accessor :root, :queue
 end

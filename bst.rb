@@ -248,6 +248,20 @@ class Tree
     return [height(node.left_node), height(node.right_node)].max + 1
   end
 
+  def depth(node)
+    def depth_traverser(node, predecessor, value=0)
+      return value if node == predecessor
+      if node.data > predecessor.data
+        value += 1
+        depth_traverser(node, predecessor.right_node, value)
+      else
+        value += 1
+        depth_traverser(node, predecessor.left_node, value)
+      end
+    end
+    return depth_traverser(node, @root)
+  end
+
   protected
   attr_accessor :root, :queue
 end
